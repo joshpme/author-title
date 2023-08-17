@@ -1,46 +1,38 @@
 import {useEffect, useState} from "react";
 
-function Author(props) {
-    const [name, setName] = useState(props.name);
+function Affiliation(props) {
+    console.log(props);
+    const [name, setName] = useState(props.affiliation.name ?? '');
+
     useEffect(() => {
-        props.setAuthors((authors) => {
-            const newAuthors = [...authors];
-            newAuthors[props.index] = {name: name };
-            return newAuthors;
+        props.setAffiliations((affiliations) => {
+            const newAffiliations = [...affiliations];
+            newAffiliations[props.index] = {name: name};
+            return newAffiliations;
         });
     }, [name]);
 
-    const removeAuthor = () => {
-        props.setAuthors((authors) => {
-            const newAuthors = [...authors];
-            newAuthors.splice(props.index, 1);
-            return newAuthors;
+    const removeAffiliation = () => {
+        props.setAffiliations((affiliations) => {
+            const newAffiliations = [...affiliations];
+            newAffiliations.splice(props.index, 1);
+            return newAffiliations;
         });
     }
 
     return (
-        <div className={"my-2"}>
-            <div className={"flex gap-4"}>
-                <div>
-                    <label>First Name</label>
-                    <input type={"text"} onChange={(e) => setFirstName(e.target.value)} value={firstName}
-                           className={"form-input"}/>
-                </div>
-                <div>
-                    <label>Last Name</label>
-                    <input type={"text"} onChange={(e) => setLastName(e.target.value)} value={lastName}
-                           className={"form-input"}/>
-                </div>
-                <div>
-
-                </div>
-                <div>
-                    <button type={"button"} className={"removeButton"} onClick={removeAuthor}>x</button>
-                </div>
+        <div className={"mb-1"}>
+            <div>
+                <input type={"text"} onChange={(e) => setName(e.target.value)} value={name}
+                       className={"form-input"}/>
             </div>
+            <div className={"flex gap-2 justify-start"}>
 
+                <button type={"button"} className={"removeButton"} onClick={removeAffiliation}>Remove Affiliation
+                </button>
+            </div>
         </div>
     );
 }
 
-export default Author;
+export default Affiliation;
