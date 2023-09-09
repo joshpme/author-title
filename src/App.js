@@ -3,40 +3,71 @@ import Author from "./Author";
 import Preview from "./Preview";
 
 function App() {
-    const [title, setTitle] = useState("The First Room-Temperature Ambient-Pressure Superconductor")
-    const [funding, setFunding] = useState("Authored by Jefferson Science Associates, LLC under U.S. DOE Con-tract No. DE-AC05-06OR23177. The U.S. Government retains a non-exclusive, paid-up, irrevocable, world-wide license to publish or repro-duce this manuscript for U.S. Government purposes.");
-    const [authors, setAuthors] = useState([
-        {
-            type: 'author',
-            firstName: "Sukbae",
-            lastName: "Lee",
-            affiliations: [
-                { name: "Department of Physics, Korea University, Seoul, Korea" },
-                { name: "ANSTO, NSW, Australia" }
-            ]
-        },
-        {
-            type: 'co-author',
-            firstName: "Ji-Hoon",
-            lastName: "Kim",
-            affiliations: [
-                { name: "Department of Physics, Korea University, Seoul, Korea" }
-            ]
-        },
-        {
-            type: 'co-author',
-            firstName: "Young-Wan",
-            lastName: "Kwon",
-            affiliations: [
-                { name: "Department of Physics, Korea University, Seoul, Korea" }
-            ]
+    const queryParameters = new URLSearchParams(window.location.search)
+    const conference = queryParameters.get("conference")
+    const code = queryParameters.get("code")
+    const [paperCode, setPaperCode] = useState(code)
+
+    const [title, setTitle] = useState("")
+    const [abstract, setAbstract] = useState("")
+    const [funding, setFunding] = useState("");
+    const [authors, setAuthors] = useState([]);
+    const [displayType, setDisplayType] = useState("short");
+
+    const toInitial = (name) => {
+        return name.charAt(0).toUpperCase() + "."
+    }
+    const lookupPaper = async () => {
+        let results = await fetch(`https://faas-syd1-c274eac6.doserverless.co/api/v1/web/fn-19977d5d-a466-4a2d-bfd5-e29ba32197eb/indico/find?conference=${conference}&code=${code}`)
+        results = await results.json()
+
+
+        if (results.length !== 0) {
+            setTitle(results[0].Title.toUpperCase())
+            let presenters = [...results[0].Presenters].map((presenter) => {
+                return {
+                    firstName: presenter.FirstName,
+                    initial: toInitial(presenter.FirstName),
+                    familyName: presenter.FamilyName,
+                    authorType: 'presenter',
+                    affiliations: [{name: presenter.Affiliation}],
+                    displayOrder: presenter.DisplayOrder
+                }
+            })
+
+            let otherAuthors = [...results[0].Authors].map((author) => {
+                return {
+                    firstName: author.FirstName,
+                    initial: toInitial(author.FirstName),
+                    familyName: author.FamilyName,
+                    authorType: author.AuthorType,
+                    affiliations: [{name: author.Affiliation}],
+                    displayOrder: author.DisplayOrder
+                }
+            })
+            let authors = [...otherAuthors, ...presenters].sort((a, b) => a.displayOrder - b.displayOrder);
+            setAuthors(authors)
+            setAbstract(results[0].Description)
         }
-    ]);
+    };
 
     return (
         <div className="wrapper">
             <div>
                 <h1>Template Generator</h1>
+
+                {conference && <div>
+                    <div>
+                        <label>Paper Code: </label>
+                        <div className={"flex items-start gap-2 w-64"}>
+                            <input type={"text"}
+                                   value={paperCode} onChange={(e) => setPaperCode(e.target.value)}
+                                   className={"form-input"}/>
+                            <button type={"button"} className={"downloadButton"} onClick={lookupPaper}>Fetch</button>
+                        </div>
+                    </div>
+                </div>
+                }
 
                 <div className={"section"}>
                     <h2>Title</h2>
@@ -48,6 +79,44 @@ function App() {
                                className={"form-input"}/>
                     </div>
 
+
+                </div>
+
+                <div className={"section"}>
+                    <h2>Authors</h2>
+                    <div>
+                        {authors.map(
+                            (author, index) => {
+                                return <Author displayType={displayType} key={index} author={author} index={index}
+                                               setAuthors={setAuthors}/>
+                            })
+                        }
+                    </div>
+                </div>
+
+                <div className={"section"}>
+                    <div className={"my-2"}>
+                        <label>Display Type
+                        </label>
+                        <select onChange={(e) => setDisplayType(e.target.value)} value={displayType}
+                                className={"form-input"}>
+                            <option value={"short"}>Short</option>
+                            <option value={"long"}>Long</option>
+                        </select>
+
+                    </div>
+
+                    <div className={"my-2"}>
+                        <div className={"my-2"}>
+                            <label>
+                                Abstract
+                            </label>
+                            <textarea rows={10} onChange={(e) => setAbstract(e.target.value)} value={abstract}
+                                      className={"form-input"}>
+                            </textarea>
+                        </div>
+                    </div>
+
                     <div className={"my-2"}>
                         <label>
                             Funding
@@ -56,17 +125,8 @@ function App() {
                                   className={"form-input"}>
                     </textarea>
                     </div>
-                </div>
 
-                <div className={"section"}>
-                    <h2>Authors</h2>
-                    <div>
-                        {authors.map(
-                            (author, index) => {
-                                return <Author key={index} author={author} index={index} setAuthors={setAuthors}/>
-                            })
-                        }
-                    </div>
+
                 </div>
             </div>
             <div className={"flex flex-col"}>
@@ -91,7 +151,7 @@ function App() {
                 </div>
                 <div className={"section flex flex-col grow"}>
                     <h2 className={"grow-0"}>Preview</h2>
-                    <Preview title={title} funding={funding} authors={authors} />
+                    <Preview title={title} funding={funding} authors={authors} abstract={abstract}/>
                 </div>
             </div>
 

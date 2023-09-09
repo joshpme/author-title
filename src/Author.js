@@ -3,20 +3,23 @@ import Affiliation from "./Affiliation";
 
 function Author(props) {
     const [firstName, setFirstName] = useState(props.author.firstName ?? "");
-    const [lastName, setLastName] = useState(props.author.lastName ?? "");
-    const [type, setType] = useState(props.author.type ?? 'author');
+    const [initial, setInitial] = useState(props.author.initial ?? "");
+    const [familyName, setFamilyName] = useState(props.author.familyName ?? "");
     const [affiliations, setAffiliations] = useState(props.author.affiliations ?? []);
+    const [displayOrder, setDisplayOrder] = useState(props.author.displayOrder ?? 0);
+
     useEffect(() => {
         props.setAuthors((authors) => {
             const newAuthors = [...authors];
             newAuthors[props.index] = {
                 firstName: firstName,
-                lastName: lastName,
+                initial: initial,
+                familyName: familyName,
                 affiliations: affiliations
             };
             return newAuthors;
         });
-    }, [firstName, lastName]);
+    }, [firstName, familyName]);
 
     const removeAuthor = () => {
         props.setAuthors((authors) => {
@@ -37,30 +40,31 @@ function Author(props) {
     return (
         <div className={"my-2"}>
             <div className={"flex gap-4"}>
-                <div className={"flex-auto"}>
+                <div className={"w-16"}>
                     <div>
+                        <label>#</label>
+                        <input type={"text"} onChange={(e) => setDisplayOrder(e.target.value)} value={displayOrder}
+                               className={"form-input"}/>
+                    </div>
+                </div>
+
+                <div className={"w-32"}>
+                    {props.displayType === 'short' && <div>
+                        <label>Initial</label>
+                        <input type={"text"} onChange={(e) => setInitial(e.target.value)} value={initial}
+                               className={"form-input"}/>
+                    </div>
+                    }
+                    {props.displayType === 'long' && <div>
                         <label>First Name</label>
                         <input type={"text"} onChange={(e) => setFirstName(e.target.value)} value={firstName}
                                className={"form-input"}/>
                     </div>
-
-                    <div className={"flex items-center gap-4"}>
-                        <label className={"flex items-center gap-2"}>
-                            <span>Author</span>
-                            <input type={"radio"} value={"author"} onChange={(e) => setType(e.target.value)}
-                                   checked={type === 'author'}/>
-                        </label>
-                        <label className={"flex items-center gap-2"}>
-                            <span>Co-Author</span>
-                            <input type={"radio"} value={"co-author"} onChange={(e) => setType(e.target.value)}
-                                   checked={type === 'co-author'}/>
-
-                        </label>
-                    </div>
+                    }
                 </div>
                 <div className={"flex-auto"}>
                     <label>Last Name</label>
-                    <input type={"text"} onChange={(e) => setLastName(e.target.value)} value={lastName}
+                    <input type={"text"} onChange={(e) => setFamilyName(e.target.value)} value={familyName}
                            className={"form-input"}/>
                 </div>
                 <div className={"flex-auto"}>

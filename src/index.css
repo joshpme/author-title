@@ -54,7 +54,6 @@ h2 {
     @apply
     text-2xl
     font-bold
-    uppercase
     my-3
     flex-none
 }

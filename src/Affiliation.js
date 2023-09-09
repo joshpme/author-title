@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 
 function Affiliation(props) {
-    console.log(props);
     const [name, setName] = useState(props.affiliation.name ?? '');
 
     useEffect(() => {
