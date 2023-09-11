@@ -1,10 +1,10 @@
 import Header from "./Header";
 import Nav from "./Nav";
 import {useSelector} from 'react-redux'
-import Find from "./Find";
+import Find from "../Pages/Find";
 
 function App() {
-    const findState = useSelector((state) => state.main)
+    const findState = useSelector((state) => state.nav)
 
     return (
         <div>

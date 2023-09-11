@@ -6,7 +6,7 @@ const initialState = {
     page: 'find'
 }
 
-export const mainSlice = createSlice({
+export const navSlice = createSlice({
     name: 'main',
     initialState,
     reducers: {
@@ -17,6 +17,6 @@ export const mainSlice = createSlice({
 })
 
 // Action creators are generated for each case reducer function
-export const { changePage } = mainSlice.actions
+export const { changePage } = navSlice.actions
 
-export default mainSlice.reducer
+export default navSlice.reducer

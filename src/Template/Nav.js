@@ -5,44 +5,49 @@ import {faUserFriends} from "@fortawesome/free-solid-svg-icons/faUserFriends";
 import {faBuilding} from "@fortawesome/free-solid-svg-icons/faBuilding";
 import {faBuildingUser} from "@fortawesome/free-solid-svg-icons/faBuildingUser";
 import {faFileExport} from "@fortawesome/free-solid-svg-icons/faFileExport";
+import {useSelector} from "react-redux";
 
 function Nav() {
+    const navState = useSelector((state) => state.nav)
+    const page = navState.page
+
+    const isCurrent = (pageName) => {
+        return page === pageName ? "active" : ""
+    }
+
     return (
         <div className={"bg-blue-700 hidden xl:block"}>
             <div className="container mx-auto px-3">
-                <ol className="grid grid-cols-6 text-blue-50">
-                    <li className={"flex -mr-4"}>
-                        <div className={"bg-blue-50 text-black p-4 text-center grow"}>
+                <ol className="nav">
+                    <li className={`${isCurrent("find")}`}>
+                        <div>
                             <FontAwesomeIcon fixedWidth={true} icon={faSearch}/> Find paper
                         </div>
-                        <div className={"h-0 w-0 border-[28px] border-transparent border-l-blue-50 grow-0"}>
-
+                    </li>
+                    <li className={`${isCurrent("title")}`}>
+                        <div>
+                            <FontAwesomeIcon fixedWidth={true} icon={faHeading}/> Paper Title
                         </div>
                     </li>
-                    <li className={"p-4 text-center"}>
-                        <span>
-                            <FontAwesomeIcon fixedWidth={true} icon={faHeading}/> Paper Title
-                        </span>
-                    </li>
-                    <li className={"p-4 text-center"}>
-                        <span>
+                    <li className={`${isCurrent("authors")}`}>
+                        <div>
                             <FontAwesomeIcon fixedWidth={true} icon={faUserFriends}/> Authors
-                        </span>
+                        </div>
                     </li>
-                    <li className={"p-4 text-center"}>
-                        <span>
+                    <li className={`${isCurrent("organisations")}`}>
+                        <div>
                             <FontAwesomeIcon fixedWidth={true} icon={faBuilding}/> Organisations
-                        </span>
+                        </div>
                     </li>
-                    <li className={"p-4 text-center"}>
-                        <span>
+                    <li className={`${isCurrent("affiliations")}`}>
+                        <div>
                             <FontAwesomeIcon fixedWidth={true} icon={faBuildingUser}/> Affiliations
-                        </span>
+                        </div>
                     </li>
-                    <li className={"p-4 text-center"}>
-                        <span>
+                    <li className={`${isCurrent("export")}`}>
+                        <div>
                              <FontAwesomeIcon fixedWidth={true} icon={faFileExport}/> Export
-                        </span>
+                        </div>
                     </li>
                 </ol>
             </div>
