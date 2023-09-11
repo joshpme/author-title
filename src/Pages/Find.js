@@ -3,6 +3,8 @@ import {changeConference, changePaperCode} from "../State/findReducer";
 import {fetchConferences, fetchPaper} from "../Services/indico";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faCircleNotch} from "@fortawesome/free-solid-svg-icons/faCircleNotch";
+import {faCheckCircle} from "@fortawesome/free-solid-svg-icons/faCheckCircle";
+import {faWarning} from "@fortawesome/free-solid-svg-icons/faWarning";
 
 function Find() {
     const findState = useSelector((state) => state.find)
@@ -18,13 +20,13 @@ function Find() {
     }
 
     return (
-        <form className="container mx-auto my-3.5 px-3" onSubmit={
-            (e) => {
-                e.preventDefault()
-                dispatch(fetchPaper(params))
-            }
-        }>
-            <div className={"xl:my-10"}>
+        <div className={"xl:my-10"}>
+            <form className="container mx-auto my-3.5 px-3" onSubmit={
+                (e) => {
+                    e.preventDefault()
+                    dispatch(fetchPaper(params))
+                }
+            }>
                 <h2 className={"text-2xl font-medium"}>Step 1: Find paper</h2>
                 <div>
                     <div className={"my-4"}>
@@ -32,7 +34,7 @@ function Find() {
                             <div className="mb-2 font-medium text-gray-900">Conference</div>
                             <div>
                                 <select
-                                    defaultValue={""}
+                                    value={findState.selectedConference}
                                     onChange={(e) => dispatch(changeConference(e.target.value))}
                                     className={"input-field"}
                                     required>
@@ -51,7 +53,7 @@ function Find() {
                             <div>
                                 <input required
                                        type={"text"}
-                                       id={"code"}
+                                       value={findState.paperCode}
                                        className={"input-field"}
                                        placeholder={"TUPA071"}
                                        onChange={(e) => dispatch(changePaperCode(e.target.value))}
@@ -65,19 +67,30 @@ function Find() {
                             disabled={findState.findStatus === 'fetching'}>
                         {findState.findStatus === 'fetching' ?
                             <>
-                                <FontAwesomeIcon icon={faCircleNotch} spin fixedWidth />{' '}
+                                <FontAwesomeIcon icon={faCircleNotch} spin fixedWidth/>{' '}
                                 Fetching...
-                            </>:
+                            </> :
                             'Find'
                         }
                     </button>
 
                     {findState.findStatus === 'failed' &&
-                        <div className={"text-red-500 mt-2"}>{findState.error}</div>
+                        <div className={"text-red-500 mt-2"}>
+                            <FontAwesomeIcon icon={faWarning} fixedWidth/>{' '}
+                            {findState.error}
+                        </div>
+                    }
+
+                    {findState.findStatus === 'succeeded' &&
+                        <div className={"font-medium text-green-600"}>
+                            <FontAwesomeIcon icon={faCheckCircle} fixedWidth/>{' '}
+                            Paper found!
+                        </div>
                     }
                 </div>
-            </div>
-        </form>
+            </form>
+        </div>
+
     );
 }
 

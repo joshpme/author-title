@@ -2,17 +2,16 @@ import { createSlice } from '@reduxjs/toolkit'
 import {fetchConferences, fetchPaper} from "../Services/indico";
 
 const initialState = {
-    conferenceLookupStatus: 'idle', // 'idle', 'fetching', 'succeeded', 'failed'
+    conferenceLookupStatus: 'idle',
     conferences: [],
-    selectedConference: null,
-    paperCode: '',
-    findStatus: 'idle', // 'idle', 'fetching', 'succeeded', 'failed'
-    error: null,
-    paper: null,
+    selectedConference: 41,
+    paperCode: 'TUPA071',
+    findStatus: 'idle',
+    error: null
 }
 
 export const findSlice = createSlice({
-    name: 'main',
+    name: 'find',
     initialState,
     reducers: {
         changeConference: (state, action) => {
@@ -21,7 +20,6 @@ export const findSlice = createSlice({
         changePaperCode: (state, action) => {
             state.paperCode = action.payload;
         }
-
     },
     extraReducers: (builder) => {
         builder.addCase(fetchConferences.fulfilled, (state, action) => {
@@ -37,8 +35,8 @@ export const findSlice = createSlice({
                 state.error = "No paper found"
             } else {
                 state.findStatus = 'succeeded';
-                state.paper = action.payload[0]
             }
+            state.findStatus = 'idle'
         }).addCase(fetchPaper.rejected, (state, action) => {
             state.findStatus = 'failed';
             state.error = "Could not connect to server"
@@ -48,8 +46,7 @@ export const findSlice = createSlice({
 
 export const {
     changeConference,
-    changePaperCode,
-    lookupConferences,
-    findPaper } = findSlice.actions
+    changePaperCode
+} = findSlice.actions
 
 export default findSlice.reducer
