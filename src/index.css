@@ -20,10 +20,6 @@ body {
     flex
 }
 
-.nav li.active {
-    @apply
-    -mr-4
-}
 
 .nav li div:first-child {
     @apply
@@ -39,10 +35,11 @@ body {
 
 .nav li.before div {
     @apply
-    text-gray-500
+    cursor-pointer
+    bg-blue-300
 }
 
-.nav li.active::after {
+.nav li:not(:last-child).active::after {
     content: "";
     @apply
     h-0 w-0 border-[28px] border-transparent border-l-blue-50 grow-0
